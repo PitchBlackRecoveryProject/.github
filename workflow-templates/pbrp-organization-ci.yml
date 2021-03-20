@@ -6,11 +6,16 @@ on:
         description: 'Deploy Type (TEST/BETA/OFFICIAL)'
         required: true
         default: 'TEST'
+      ChangeLogs:
+        description: 'Build ChangeLogs'
+        required: true
+        default: 'Sync Latest Source'
   watch:
     types: [started]
 
 env:
   BUILD_RELEASE_TYPE: ${{ github.event.inputs.DEPLOY_TYPE }}
+  CHANGELOG: ${{ github.event.inputs.ChangeLogs }}
   BOT_API: ${{ secrets.BOT_API }}
   GCF_AUTH_KEY: ${{ secrets.GCF_AUTH_KEY }}
   GH_BOT_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -44,6 +49,5 @@ jobs:
        - name: Release Builds 
          run: |
               sudo apt-get update && sudo apt-get install sshpass -y
-              export CIRCLE_SHA1=$GITHUB_SHA
               cd $BuildPath 
               bash vendor/utils/pb_deploy.sh ${BUILD_RELEASE_TYPE} ${VENDOR} ${CODENAME}
