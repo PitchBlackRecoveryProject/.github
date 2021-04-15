@@ -10,8 +10,6 @@ on:
         description: 'Build ChangeLogs'
         required: true
         default: 'Sync Latest Source'
-  watch:
-    types: [started]
 
 env:
   BUILD_RELEASE_TYPE: ${{ github.event.inputs.DEPLOY_TYPE }}
