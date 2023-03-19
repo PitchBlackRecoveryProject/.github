@@ -49,6 +49,10 @@ jobs:
            path: .github/actions/Cleaner
        - name: Cleaning
          uses: ./.github/actions/Cleaner
+       - name: Set Swap Space
+         uses: pierotofy/set-swap-space@master
+         with:
+           swap-size-gb: 12
 
        - name: Checkout Recovery Compiler Repo
          uses: actions/checkout@v2
@@ -59,10 +63,6 @@ jobs:
            path: .github/actions/Compiler
        - name: Recovery Compilation
          uses: ./.github/actions/Compiler
-       - name: Set Swap Space
-         uses: pierotofy/set-swap-space@master
-         with:
-           swap-size-gb: 12
        
        - name: Release Builds 
          run: |
