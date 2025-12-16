@@ -6,14 +6,19 @@ on:
         description: 'Deploy Type (TEST/BETA/OFFICIAL)'
         required: true
         default: 'TEST'
+        type: choice
+        options:
+          - 'TEST'
+          - 'OFFICIAL'
+          - 'BETA'
       ChangeLogs:
         description: 'Build ChangeLogs'
         required: true
-        default: 'Sync Latest Source'
+        default: '- Sync Latest Source\n'
 
 env:
-  BUILD_RELEASE_TYPE: ${{ github.event.inputs.DEPLOY_TYPE }}
-  CHANGELOG: ${{ github.event.inputs.ChangeLogs }}
+  BUILD_RELEASE_TYPE: ${{ github.event.inputs.DEPLOY_TYPE || 'TEST' }}
+  CHANGELOG: ${{ github.event.inputs.ChangeLogs || '- Sync Latest Source\n' }}
   BOT_API: ${{ secrets.BOT_API }}
   GCF_AUTH_KEY: ${{ secrets.GCF_AUTH_KEY }}
   GH_BOT_TOKEN: ${{ secrets.GH_BOT_TOKEN }}
@@ -69,3 +74,4 @@ jobs:
               sudo apt-get update && sudo apt-get install sshpass -y
               cd $BuildPath 
               bash vendor/utils/pb_deploy.sh ${BUILD_RELEASE_TYPE} ${VENDOR} ${CODENAME}
+              
