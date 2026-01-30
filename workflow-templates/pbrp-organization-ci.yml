@@ -15,6 +15,10 @@ on:
         description: 'Build ChangeLogs'
         required: true
         default: '- Sync Latest Source\n'
+      MANIFEST_BRANCH:
+        description: 'Manifest Branch (Leave empty to use current branch)'
+        required: false
+        default: ''
 
 env:
   BUILD_RELEASE_TYPE: ${{ github.event.inputs.DEPLOY_TYPE || 'TEST' }}
@@ -36,8 +40,19 @@ jobs:
 
     steps:
        - name: Auto Adapt Manifest
-         # /* if your branch name is other than the one which you dispatched workflow from then set it manually in the place of ${GITHUB_REF##*/}" */ 
-         run: echo "MANIFEST=https://github.com/PitchBlackRecoveryProject/manifest_pb -b ${GITHUB_REF##*/}" >> $GITHUB_ENV
+         run: |
+           # Get input branch
+           INPUT_BRANCH="${{ github.event.inputs.MANIFEST_BRANCH }}"
+           
+           # If input is empty (-z), use current ref. Otherwise use input.
+           if [ -z "$INPUT_BRANCH" ]; then
+             BRANCH=${GITHUB_REF##*/}
+           else
+             BRANCH=$INPUT_BRANCH
+           fi
+           
+           echo "Selected Manifest Branch: $BRANCH"
+           echo "MANIFEST=https://github.com/PitchBlackRecoveryProject/manifest_pb -b ${BRANCH}" >> $GITHUB_ENV
 
        - name: Export Vars
          run: |
@@ -74,4 +89,3 @@ jobs:
               sudo apt-get update && sudo apt-get install sshpass -y
               cd $BuildPath 
               bash vendor/utils/pb_deploy.sh ${BUILD_RELEASE_TYPE} ${VENDOR} ${CODENAME}
-              
